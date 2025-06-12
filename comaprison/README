@@ -1,0 +1,117 @@
+manish@raspberrypi5:~/github $ vim comparison.asm
+manish@raspberrypi5:~/github $ aarch64-linux-gnu-as -g comparison.asm -o comparison.o
+manish@raspberrypi5:~/github $ aarch64-linux-gnu-ld comparison.o -o comparison
+manish@raspberrypi5:~/github $ gdb comparison
+GNU gdb (Debian 13.1-3) 13.1
+Copyright (C) 2023 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+Type "show copying" and "show warranty" for details.
+This GDB was configured as "aarch64-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<https://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+    <http://www.gnu.org/software/gdb/documentation/>.
+
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from comparison...
+(gdb) b _start
+Breakpoint 1 at 0x400078: file comparison.asm, line 7.
+(gdb) run
+Starting program: /home/manish/github/comparison
+
+Breakpoint 1, _start () at comparison.asm:7
+7       mov x1, #0
+(gdb) disassemble
+Dump of assembler code for function _start:
+=> 0x0000000000400078 <+0>:     mov     x1, #0x0                        // #0
+   0x000000000040007c <+4>:     mov     x2, #0x3                        // #3
+   0x0000000000400080 <+8>:     cmp     w1, w2
+   0x0000000000400084 <+12>:    csel    w3, w2, w1, gt
+   0x0000000000400088 <+16>:    mov     x3, #0x3                        // #3
+   0x000000000040008c <+20>:    mov     x4, #0x0                        // #0
+   0x0000000000400090 <+24>:    cmp     w3, w4
+   0x0000000000400094 <+28>:    csel    w5, w3, w4, gt
+   0x0000000000400098 <+32>:    mov     x0, #0x0                        // #0
+   0x000000000040009c <+36>:    mov     x8, #0x5d                       // #93
+   0x00000000004000a0 <+40>:    svc     #0x0
+End of assembler dump.
+(gdb) info register x1 x2 x3 x4 x5
+x1             0x0                 0
+x2             0x0                 0
+x3             0x0                 0
+x4             0x0                 0
+x5             0x0                 0
+(gdb) info register x1 x2 x3 x4 x5 cpsr
+x1             0x0                 0
+x2             0x0                 0
+x3             0x0                 0
+x4             0x0                 0
+x5             0x0                 0
+cpsr           0x1000              [ EL=0 BTYPE=0 SSBS ]
+(gdb) ni
+8       mov x2, #3
+(gdb) info register x1 x2 x3 x4 x5 cpsr
+x1             0x0                 0
+x2             0x0                 0
+x3             0x0                 0
+x4             0x0                 0
+x5             0x0                 0
+cpsr           0x201000            [ EL=0 BTYPE=0 SSBS SS ]
+(gdb) ni
+10      cmp     w1, w2
+(gdb) ni
+11      csel    w3, w2, w1, GT
+(gdb) info register x1 x2 x3 x4 x5 cpsr
+x1             0x0                 0
+x2             0x3                 3
+x3             0x0                 0
+x4             0x0                 0
+x5             0x0                 0
+cpsr           0x80201000          [ EL=0 BTYPE=0 SSBS SS N ]
+(gdb) ni
+13      mov x3, #3
+(gdb) info register x1 x2 x3 x4 x5 cpsr
+x1             0x0                 0
+x2             0x3                 3
+x3             0x0                 0
+x4             0x0                 0
+x5             0x0                 0
+cpsr           0x80201000          [ EL=0 BTYPE=0 SSBS SS N ]
+(gdb) ni
+14      mov x4, #0
+(gdb) ni
+16      cmp     w3, w4
+(gdb) info register x1 x2 x3 x4 x5 cpsr
+x1             0x0                 0
+x2             0x3                 3
+x3             0x3                 3
+x4             0x0                 0
+x5             0x0                 0
+cpsr           0x80201000          [ EL=0 BTYPE=0 SSBS SS N ]
+(gdb) ni
+17      csel    w5, w3, w4, GT
+(gdb) info register x1 x2 x3 x4 x5 cpsr
+x1             0x0                 0
+x2             0x3                 3
+x3             0x3                 3
+x4             0x0                 0
+x5             0x0                 0
+cpsr           0x20201000          [ EL=0 BTYPE=0 SSBS SS C ]
+(gdb) ni
+19      mov x0, #0
+(gdb) ni
+20      mov x8, #93
+(gdb) info register x1 x2 x3 x4 x5 cpsr
+x1             0x0                 0
+x2             0x3                 3
+x3             0x3                 3
+x4             0x0                 0
+x5             0x3                 3
+cpsr           0x20201000          [ EL=0 BTYPE=0 SSBS SS C ]
+(gdb)
+
+
